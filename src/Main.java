@@ -114,7 +114,7 @@ public class Main {
     }
 
     /**
-     * Tests the DepositTransaction class.
+     * Tests the DepositTransaction class
      */
     public static void testDepositTransaction() {
         DepositTransaction deposit = new DepositTransaction(500, new GregorianCalendar(2024, Calendar.JANUARY, 1));
