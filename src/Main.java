@@ -1,156 +1,148 @@
-import Lecture1_adt.*; // Import all classes from Lecture1_adt package to be used in this client code
+package Lecture1_adt;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.ArrayList;
 import java.util.List;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-/*
-* Client Code for accessing the Lecture1_adt.TransactionInterface.java module
+/**
+ * Client code for accessing and testing the Lecture1_adt.TransactionInterface module.
  */
 public class Main {
 
+    /**
+     * Tests the functionality of the Transaction1 class.
+     */
     public static void testTransaction1() {
-        Calendar d1 = new GregorianCalendar(); // d1 is an Object [Objects are Reference types]
-        Lecture1_adt.Transaction1 t1 = new Lecture1_adt.Transaction1(1000, d1); // amount and d1 are arguments
+        Calendar d1 = new GregorianCalendar();
+        Lecture1_adt.Transaction1 t1 = new Lecture1_adt.Transaction1(1000, d1);
 
         System.out.println(t1.toString());
-        System.out.println("Lecture1_adt.TransactionInterface Amount: \t " + t1.amount);
-        System.out.println("Lecture1_adt.TransactionInterface Date: \t " + t1.date);
+        System.out.println("Transaction1 Amount: \t" + t1.amount);
+        System.out.println("Transaction1 Date: \t" + t1.date);
 
-        // Please note that the Client Codes can access the data in the class directly through the dot operator
-        // This kind of exposure is a threat to both the Representation Independence and Preservation of Invariants
+        // Note: Direct access to class data through the dot operator poses threats
+        // to Representation Independence and Preservation of Invariants.
     }
 
-
-    /** @return a transaction of same amount as t, one month later
-     * This is a PRODUCER of the class Lecture1_adt.Transaction2
-     * This code will help demostrate the Design exposures still present in transaction2 class
-     * */
-
+    /**
+     * Produces a new Transaction2 with the same amount as the input transaction,
+     * scheduled for one month later.
+     *
+     * @param t The input Transaction2 object.
+     * @return A new Transaction2 object one month after the input transaction.
+     */
     public static Transaction2 makeNextPayment(Transaction2 t) {
-        Calendar d =  t.getDate();
+        Calendar d = t.getDate();
         d.add(Calendar.MONTH, 1);
         return new Transaction2(t.getAmount(), d);
     }
 
-    /*
-    Testing Transaction2 class
+    /**
+     * Tests the functionality of the Transaction2 class.
      */
     public static void testTransaction2() {
-
         Calendar d1 = new GregorianCalendar();
+        Transaction2 t = new Transaction2(1000, d1);
 
-        Lecture1_adt.Transaction2 t = new Lecture1_adt.Transaction2(1000, d1);
+        Transaction2 modifiedT = makeNextPayment(t);
+        System.out.println("\nState of the Object After Client Code Modification:");
+        System.out.println("Transaction2 Amount: \t" + modifiedT.getAmount());
+        System.out.println("Transaction2 Date: \t" + modifiedT.getDate().getTime());
 
-        Lecture1_adt.Transaction2 modified_t = makeNextPayment(t);
-
-        System.out.println("\n\nState of the Object T1 After Client Code Tried to Change the Amount");
-        System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+modified_t.getAmount());
-        System.out.println("Lecture1_adt.TransactionInterface Date: \t "+modified_t.getDate().getTime());
-
-        System.out.println("\n\nHow does T2 Look Like?????");
-        System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+modified_t.getAmount());
-        System.out.println("Lecture1_adt.TransactionInterface Date: \t "+modified_t.getDate().getTime());
-
-        /* Please note that Although we have solved the problem of Transaction1
-        * And client code can no longer use the dot (.) operator to directly access the data
-        * There is still some exposure especially if we pass an object of a previous Transaction2 to create a new Transaction2 object
-         */
-
+        // Demonstrates remaining exposure issues when reusing objects in Transaction2.
     }
 
-
-    /** @return a list of 12 monthly payments of identical amounts
-     * This code will help demostrate the Design exposures still present in transaction3 class
-     * */
-    public static List<Transaction3> makeYearOfPayments (int amount) throws NullPointerException {
-
-        List<Transaction3> listOfTransaction3s = new ArrayList<Transaction3>();
+    /**
+     * Creates a list of 12 monthly Transaction3 objects with identical amounts.
+     *
+     * @param amount The transaction amount.
+     * @return A list of 12 monthly payments.
+     */
+    public static List<Transaction3> makeYearOfPayments(int amount) {
+        List<Transaction3> list = new ArrayList<>();
         Calendar date = new GregorianCalendar(2024, Calendar.JANUARY, 3);
 
-
         for (int i = 0; i < 12; i++) {
-            listOfTransaction3s.add(new Transaction3(amount, date));
+            list.add(new Transaction3(amount, date));
             date.add(Calendar.MONTH, 1);
         }
-        return listOfTransaction3s;
+        return list;
     }
 
-    /*
-    Testing Transaction3 class
+    /**
+     * Tests the functionality of the Transaction3 class.
      */
     public static void testTransaction3() {
-
         List<Transaction3> allPaymentsIn2024 = makeYearOfPayments(1000);
 
-        for (Transaction3 t3 : allPaymentsIn2024) {
-
-            // Display all the 12 Transactions
-            for (Transaction3 transact : allPaymentsIn2024) {
-                System.out.println("\n\n  ::::::::::::::::::::::::::::::::::::::::::::\n");
-                System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+transact.getAmount());
-                System.out.println("Lecture1_adt.TransactionInterface Date: \t "+transact.getDate().getTime());
-            }
+        for (Transaction3 t : allPaymentsIn2024) {
+            System.out.println("\nTransaction3 Details:");
+            System.out.println("Amount: \t" + t.getAmount());
+            System.out.println("Date: \t" + t.getDate().getTime());
         }
-
-        /* Please Check all the 12 transactions displayed and hwo their dates look like
-         * Note that Although Transaction3 class resolves to an extent the exposure in Transaction2 class
-         * There is still some exposure especially if we pass an object of a previous Transaction3 to create a
-         * new Transaction3 object
-         */
     }
 
-
-    /** @return a list of 12 monthly payments of identical amounts
-     * This code Show that by judicious copying and defensive programming we eliminate the exposure in Transaction3
-     * As defined in the constructor of Transaction4 class
-     * */
-
-    public static List<Transaction4> makeYearOfPaymentsFinal (int amount) throws NullPointerException {
-
-        List<Transaction4> listOfTransaction4s = new ArrayList<Transaction4>();
+    /**
+     * Creates a list of 12 monthly Transaction4 objects with improved encapsulation.
+     *
+     * @param amount The transaction amount.
+     * @return A list of 12 monthly payments with defensive programming.
+     */
+    public static List<Transaction4> makeYearOfPaymentsFinal(int amount) {
+        List<Transaction4> list = new ArrayList<>();
         Calendar date = new GregorianCalendar(2024, Calendar.JANUARY, 3);
 
-
         for (int i = 0; i < 12; i++) {
-            listOfTransaction4s.add(new Transaction4(amount, date));
+            list.add(new Transaction4(amount, date));
             date.add(Calendar.MONTH, 1);
         }
-        return listOfTransaction4s;
+        return list;
     }
 
-    /*
-    Testing Transaction3 class
+    /**
+     * Tests the functionality of the Transaction4 class.
      */
     public static void testTransaction4() {
-
-        /*
-         * Call the function to make all the Twelve transaction in a year of our business
-         */
-
         List<Transaction4> transactionsIn2024 = makeYearOfPaymentsFinal(1200);
 
-        // Display all the 12 Transactions
-        for (Transaction4 transact : transactionsIn2024) {
-            System.out.println("\n\n  ::::::::::::::::::::::::::::::::::::::::::::\n");
-            System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+transact.getAmount());
-            System.out.println("Lecture1_adt.TransactionInterface Date: \t "+transact.getDate().getTime());
+        for (Transaction4 t : transactionsIn2024) {
+            System.out.println("\nTransaction4 Details:");
+            System.out.println("Amount: \t" + t.getAmount());
+            System.out.println("Date: \t" + t.getDate().getTime());
         }
-
-        // Please Take a look at all the 12 transaction now and compare with the outputs of the Transaction3 class
     }
 
+    /**
+     * Tests the DepositTransaction class.
+     */
+    public static void testDepositTransaction() {
+        DepositTransaction deposit = new DepositTransaction(500, new GregorianCalendar(2024, Calendar.JANUARY, 1));
+        deposit.apply();
+        System.out.println("Deposit applied: " + deposit.toString());
+    }
 
+    /**
+     * Tests the WithdrawalTransaction class.
+     */
+    public static void testWithdrawalTransaction() {
+        WithdrawalTransaction withdrawal = new WithdrawalTransaction(200, new GregorianCalendar(2024, Calendar.FEBRUARY, 15));
+        withdrawal.apply();
+        System.out.println("Withdrawal applied: " + withdrawal.toString());
+    }
+
+    /**
+     * Main method to execute the test cases.
+     *
+     * Uncomment the desired test methods to run them.
+     */
     public static void main(String[] args) {
-        // This is the client code
-        // Uncomment the following lines to test the class which you would like to test
-
-        // testTransaction1()
-        // testTransaction2()
-        // testTransaction3()
-        // testTransaction4()
+        // Uncomment the lines below to test specific classes.
+        testTransaction1();
+        testTransaction2();
+        testTransaction3();
+        testTransaction4();
+        testDepositTransaction();
+        testWithdrawalTransaction();
     }
 }
