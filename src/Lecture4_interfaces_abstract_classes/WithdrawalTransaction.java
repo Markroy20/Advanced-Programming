@@ -151,7 +151,7 @@ class BankAccount {
     }
 }
 
-// Test class to demonstrate the transactions and exception handling
+// Test class to demonstrate the transactions and exception handlin
 public class BankTransactionTest {
     public static void main(String[] args) {
         BankAccount account = new BankAccount(500.0); // Initial balance is 500
