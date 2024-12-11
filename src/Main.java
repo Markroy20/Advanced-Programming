@@ -132,7 +132,7 @@ public class Main {
     }
 
     /**
-     * Main method to execute the test cases.
+     * Main method to execute the test case.
      *
      * Uncomment the desired test methods to run them.
      */
